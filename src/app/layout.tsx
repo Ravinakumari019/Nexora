@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import { Geist_Mono } from 'next/font/google';
 
+import { Providers } from '@/components/providers';
+
 import './globals.css';
 
 /**
@@ -66,7 +68,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${poppins.variable} ${geistMono.variable} h-full`}
     >
-      <body className="flex min-h-full flex-col antialiased">{children}</body>
+      <body className="flex min-h-full flex-col antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
