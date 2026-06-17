@@ -1,389 +1,155 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { signIn, useSession } from 'next-auth/react';
+import { Bot, ChevronRight, MessageCircle, Sparkles } from 'lucide-react';
 
-import {
-  Bot,
-  Check,
-  ChevronRight,
-  Heart,
-  MessageCircle,
-  Plus,
-  Send,
-  Settings,
-  Star,
-  Trash2,
-  User,
-} from 'lucide-react';
-
-import { Loader, PageLoader } from '@/components/loader';
-import { Modal } from '@/components/modal';
-import { SearchInput } from '@/components/search-input';
-import { ThemeToggle } from '@/components/theme-toggle';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { PageLoader } from '@/components/loader';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
+import { Card } from '@/components/ui/card';
 
-/**
- * Design System Showcase — Milestone 2 verification page.
- *
- * This page displays all design system components for visual testing.
- * It will be removed or repurposed after verification.
- */
-export default function DesignSystemPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [showLoader, setShowLoader] = useState(false);
+export default function LandingPage() {
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/chat');
+    }
+  }, [status, router]);
+
+  if (status === 'loading') {
+    return <PageLoader />;
+  }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-12 px-6 py-12">
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Nexora Design System
+    <div className="bg-radial from-orange-50 via-background to-background dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950 relative flex min-h-screen flex-col overflow-hidden font-sans antialiased">
+      {/* Background patterns */}
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
+      {/* Decorative Orbs */}
+      <div className="absolute -top-40 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
+      <div className="absolute top-1/3 -left-40 -z-10 h-72 w-72 rounded-full bg-orange-400/10 blur-3xl dark:bg-orange-500/5" />
+
+      {/* Navbar */}
+      <header className="border-border/40 bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2.5">
+            <div className="bg-primary flex h-9 w-9 items-center justify-center rounded-xl shadow-md shadow-primary/25">
+              <MessageCircle className="text-primary-foreground" size={20} />
+            </div>
+            <span className="font-heading text-xl font-bold tracking-tight">Nexora</span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => signIn('google')}
+              className="text-sm font-medium"
+            >
+              Sign In
+            </Button>
+            <Button
+              onClick={() => signIn('google')}
+              className="shadow-md shadow-primary/25"
+            >
+              Get Started
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <main className="mx-auto flex max-w-7xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-24">
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary shadow-sm">
+          <Sparkles size={14} className="animate-pulse" />
+          <span>Real-time Messaging meets AI</span>
+        </div>
+
+        <h1 className="font-heading max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+          The Premium Workspace for{' '}
+          <span className="bg-gradient-to-r from-primary via-orange-500 to-amber-500 bg-clip-text text-transparent">
+            Conversational Flow
+          </span>
         </h1>
-        <p className="text-muted-foreground text-lg">
-          Component library and design token verification — Milestone 2
+
+        <p className="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg sm:text-xl">
+          Nexora combines lightning-fast peer messaging with an integrated Gemini AI assistant to elevate your workflow and streamline collaboration.
         </p>
-        <div className="flex items-center gap-4 pt-2">
-          <ThemeToggle />
-          <Badge variant="outline">v0.2.0</Badge>
-        </div>
-      </div>
 
-      <Separator />
-
-      {/* ============ COLOR PALETTE ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Color Palette</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-7">
-          {[
-            { name: 'Primary', className: 'bg-primary' },
-            { name: 'Secondary', className: 'bg-secondary' },
-            { name: 'Background', className: 'bg-background border' },
-            { name: 'Sidebar', className: 'bg-sidebar border' },
-            { name: 'Muted', className: 'bg-muted' },
-            { name: 'Accent', className: 'bg-accent' },
-            { name: 'Destructive', className: 'bg-destructive' },
-          ].map((color) => (
-            <div key={color.name} className="space-y-1.5 text-center">
-              <div
-                className={`${color.className} border-border h-16 rounded-xl`}
-              />
-              <p className="text-xs font-medium">{color.name}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ============ TYPOGRAPHY ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Typography</h2>
-        <div className="space-y-3">
-          <h1 className="text-4xl font-bold">Heading 1 — Poppins Bold</h1>
-          <h2 className="text-3xl font-semibold">
-            Heading 2 — Poppins Semibold
-          </h2>
-          <h3 className="text-2xl font-semibold">Heading 3 — Poppins</h3>
-          <h4 className="text-xl font-semibold">Heading 4 — Poppins</h4>
-          <p className="text-base">
-            Body text — Inter. The quick brown fox jumps over the lazy dog.
-            Nexora brings real-time messaging and AI together in one premium
-            experience.
-          </p>
-          <p className="text-muted-foreground text-sm">
-            Muted text — Used for secondary information and descriptions.
-          </p>
-          <code className="bg-muted font-mono rounded px-2 py-1 text-sm">
-            Monospace — Geist Mono for code
-          </code>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ============ BUTTONS ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Buttons</h2>
-        <div className="flex flex-wrap gap-3">
-          <Button>
-            <Plus size={16} />
-            Primary
-          </Button>
-          <Button variant="secondary">
-            <Star size={16} />
-            Secondary
-          </Button>
-          <Button variant="outline">
-            <Settings size={16} />
-            Outline
-          </Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="destructive">
-            <Trash2 size={16} />
-            Destructive
-          </Button>
-          <Button variant="link">Link</Button>
-          <Button size="sm">Small</Button>
-          <Button size="lg">Large</Button>
-          <Button disabled>Disabled</Button>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ============ INPUTS ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Inputs</h2>
-        <div className="grid max-w-lg gap-4">
-          <Input placeholder="Standard input" />
-          <Input type="email" placeholder="Email address" />
-          <Input disabled placeholder="Disabled input" />
-          <SearchInput placeholder="Search conversations..." />
-          <Textarea placeholder="Write a message..." rows={3} />
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ============ CARDS ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Cards</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageCircle size={18} className="text-primary" />
-                Chat
-              </CardTitle>
-              <CardDescription>
-                Real-time messaging with your team
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm">
-                Send messages, share files, and collaborate seamlessly.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bot size={18} className="text-primary" />
-                AI Assistant
-              </CardTitle>
-              <CardDescription>
-                Powered by Google Gemini
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm">
-                Get intelligent responses with streaming markdown support.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Heart size={18} className="text-primary" />
-                Premium
-              </CardTitle>
-              <CardDescription>Built for portfolios</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground text-sm">
-                Modern SaaS aesthetic with warm, elegant design tokens.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ============ AVATARS & BADGES ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Avatars & Badges</h2>
-        <div className="flex flex-wrap items-center gap-4">
-          <Avatar>
-            <AvatarImage src="https://api.dicebear.com/9.x/initials/svg?seed=Nexora" />
-            <AvatarFallback>NX</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback>AB</AvatarFallback>
-          </Avatar>
-          <Avatar>
-            <AvatarFallback>
-              <User size={16} />
-            </AvatarFallback>
-          </Avatar>
-
-          <Separator orientation="vertical" className="h-8" />
-
-          <Badge>Default</Badge>
-          <Badge variant="secondary">Secondary</Badge>
-          <Badge variant="outline">Outline</Badge>
-          <Badge variant="destructive">Destructive</Badge>
-        </div>
-      </section>
-
-      <Separator />
-
-      {/* ============ DROPDOWN ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Dropdown Menu</h2>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-accent transition-colors"
-          >
-            Open Menu
-            <ChevronRight size={16} />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User size={14} />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings size={14} />
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
-              <Trash2 size={14} />
-              Delete Account
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </section>
-
-      <Separator />
-
-      {/* ============ MODAL ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Modal</h2>
-        <Button onClick={() => setModalOpen(true)}>Open Modal</Button>
-        <Modal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          title="Create Conversation"
-          description="Start a new conversation with a team member."
-          footer={
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setModalOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setModalOpen(false)}>
-                <Check size={16} />
-                Create
-              </Button>
-            </div>
-          }
-        >
-          <div className="space-y-4">
-            <Input placeholder="Conversation name" />
-            <Textarea placeholder="Description (optional)" rows={2} />
-          </div>
-        </Modal>
-      </section>
-
-      <Separator />
-
-      {/* ============ LOADING STATES ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Loading States</h2>
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="space-y-2 text-center">
-            <Loader size={24} />
-            <p className="text-muted-foreground text-xs">Spinner</p>
-          </div>
-          <div className="space-y-2 text-center">
-            <Loader size={32} className="text-secondary" />
-            <p className="text-muted-foreground text-xs">Large</p>
-          </div>
-          <Separator orientation="vertical" className="h-12" />
-          <div className="space-y-2">
-            <p className="text-xs font-medium">Skeleton</p>
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-3 w-48" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 pt-2">
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowLoader(!showLoader)}
+            size="lg"
+            onClick={() => signIn('google')}
+            className="group px-8 py-6 text-base shadow-lg shadow-primary/25"
           >
-            {showLoader ? 'Hide' : 'Show'} Page Loader
+            Get Started Free
+            <ChevronRight className="ml-1 transition-transform group-hover:translate-x-1" size={18} />
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => {
+              const el = document.getElementById('features');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-8 py-6 text-base"
+          >
+            Learn More
           </Button>
         </div>
-        {showLoader && (
-          <div className="border-border rounded-xl border">
-            <PageLoader />
+
+        {/* Feature Cards Grid */}
+        <div id="features" className="mt-24 w-full scroll-mt-24">
+          <h2 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
+            Designed for Modern Teams
+          </h2>
+          <p className="text-muted-foreground mt-2">
+            Packed with features, engineered for responsiveness.
+          </p>
+
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Feature 1 */}
+            <Card className="border-border/50 bg-background/50 relative overflow-hidden p-6 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl">
+                <MessageCircle size={24} />
+              </div>
+              <h3 className="font-heading mt-4 text-lg font-bold">Real-time Messaging</h3>
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                Connect instantly with peer-to-peer chat. Share files, keep track of online status, and get instant delivery.
+              </p>
+            </Card>
+
+            {/* Feature 2 */}
+            <Card className="border-border/50 bg-background/50 relative overflow-hidden p-6 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl">
+                <Bot size={24} />
+              </div>
+              <h3 className="font-heading mt-4 text-lg font-bold">Gemini AI Assistant</h3>
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                Invoke Google Gemini directly in your chats. Translate messages, summarize conversations, and generate replies on the fly.
+              </p>
+            </Card>
+
+            {/* Feature 3 */}
+            <Card className="border-border/50 bg-background/50 relative overflow-hidden p-6 text-left backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
+              <div className="bg-primary/10 text-primary flex h-12 w-12 items-center justify-center rounded-xl">
+                <Sparkles size={24} />
+              </div>
+              <h3 className="font-heading mt-4 text-lg font-bold">High-Fidelity UI</h3>
+              <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                A gorgeous dark/light interface built with polished tokens, fluid layout transitions, and glassmorphic micro-animations.
+              </p>
+            </Card>
           </div>
-        )}
-      </section>
-
-      <Separator />
-
-      {/* ============ BORDER RADIUS ============ */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Border Radius (16px base)</h2>
-        <div className="flex flex-wrap gap-4">
-          {[
-            { name: 'sm', className: 'rounded-sm' },
-            { name: 'md', className: 'rounded-md' },
-            { name: 'lg', className: 'rounded-lg' },
-            { name: 'xl', className: 'rounded-xl' },
-            { name: '2xl', className: 'rounded-2xl' },
-            { name: '3xl', className: 'rounded-3xl' },
-            { name: 'full', className: 'rounded-full' },
-          ].map((r) => (
-            <div key={r.name} className="space-y-1.5 text-center">
-              <div
-                className={`bg-primary/20 border-primary/30 h-16 w-16 border ${r.className}`}
-              />
-              <p className="text-xs font-medium">{r.name}</p>
-            </div>
-          ))}
         </div>
-      </section>
+      </main>
 
       {/* Footer */}
-      <div className="border-border border-t pt-8">
-        <p className="text-muted-foreground text-sm">
-          Nexora Design System — Milestone 2 ✓ All components verified.
-        </p>
-      </div>
-    </main>
+      <footer className="border-border/40 mt-auto border-t bg-background/40 py-8 text-center text-xs text-neutral-500">
+        <p>© {new Date().getFullYear()} Nexora. All rights reserved.</p>
+      </footer>
+    </div>
   );
 }

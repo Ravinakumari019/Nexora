@@ -1,10 +1,12 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { Bell, Menu } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 import { SearchInput } from '@/components/search-input';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface NavbarProps {
   /** Title displayed in the navbar */
@@ -23,9 +25,13 @@ interface NavbarProps {
  * - Dynamic page title
  * - Search input
  * - Notification bell (placeholder for Milestone 12)
- * - User avatar area (placeholder for Milestone 4)
+ * - User avatar area populated with session details
  */
 export function Navbar({ title, onMenuClick, className }: NavbarProps) {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const initial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
+
   return (
     <header
       className={cn(
@@ -39,6 +45,7 @@ export function Navbar({ title, onMenuClick, className }: NavbarProps) {
         onClick={onMenuClick}
         className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg p-2 transition-colors md:hidden"
         aria-label="Toggle sidebar"
+        id="mobile-sidebar-toggle"
       >
         <Menu size={20} />
       </button>
@@ -70,10 +77,15 @@ export function Navbar({ title, onMenuClick, className }: NavbarProps) {
           {/* Notification dot — will be dynamic in later milestones */}
         </button>
 
-        {/* User Avatar Placeholder — will be replaced in Milestone 4 */}
-        <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-full">
-          <span className="text-primary text-xs font-semibold">U</span>
-        </div>
+        {/* User Avatar */}
+        <Avatar className="h-8 w-8 border border-border">
+          {user?.image ? (
+            <AvatarImage src={user.image} alt={user.name || 'User'} referrerPolicy="no-referrer" />
+          ) : null}
+          <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+            {initial}
+          </AvatarFallback>
+        </Avatar>
       </div>
     </header>
   );
