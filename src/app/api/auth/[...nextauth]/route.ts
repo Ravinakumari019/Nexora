@@ -92,11 +92,11 @@ export const authOptions: AuthOptions = {
     },
   },
 
-  // Custom pages (uncomment in Milestone 4 when pages are built)
-  // pages: {
-  //   signIn: '/auth/signin',
-  //   error: '/auth/error',
-  // },
+  // Custom pages (uncommented in Milestone 4)
+  pages: {
+    signIn: '/auth/signin',
+    error: '/auth/signin',
+  },
 
   secret: process.env.AUTH_SECRET,
 

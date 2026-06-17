@@ -28,13 +28,14 @@ export interface ChatConversation {
   participants: ChatUser[];
   messages: ChatMessage[];
 }
-
 interface ChatStore {
   conversations: ChatConversation[];
   activeConversationId: string | null;
   messages: Record<string, ChatMessage[]>;
   loadingConversations: boolean;
   loadingMessages: boolean;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 
   setConversations: (conversations: ChatConversation[]) => void;
   setActiveConversationId: (id: string | null) => void;
@@ -53,6 +54,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   messages: {},
   loadingConversations: false,
   loadingMessages: false,
+  searchQuery: '',
+
+  setSearchQuery: (query) => set({ searchQuery: query }),
 
   setConversations: (conversations) => set({ conversations }),
 

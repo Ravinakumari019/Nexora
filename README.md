@@ -33,6 +33,7 @@ Built using **Next.js 16 (Turbopack)**, **React 19**, **Tailwind CSS v4 (CSS-fir
   - **Conversation Summarizer**: Interactive modal to summarize recent messages in active channels into 4-5 bulleted action items.
   - **Simulation Mode Fallback**: Gracefully operates in simulation mode if no API key is specified, allowing developers to test AI features out-of-the-box.
 - **Interactive User Settings**: Form validation in [src/app/(dashboard)/settings/page.tsx](file:///c:/Users/DELL/OneDrive/Documents/Desktop/Resume_project/chat-application/src/app/%28dashboard%29/settings/page.tsx) to let users change their display name, status message, select desktop notifications chimes, and switch visual themes.
+- **Custom Authentication Portal**: A glassmorphic login screen at [src/app/auth/signin/page.tsx](file:///c:/Users/DELL/OneDrive/Documents/Desktop/Resume_project/chat-application/src/app/auth/signin/page.tsx) supporting Google OAuth, friendly validation error display, and passwordless Credentials sign-ins for sandbox testing.
 
 ---
 

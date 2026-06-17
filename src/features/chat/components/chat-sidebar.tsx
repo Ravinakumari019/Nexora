@@ -6,7 +6,7 @@ import { Plus, Search, MessageSquare, Users, Loader2 } from 'lucide-react';
 import { useChatStore, ChatConversation } from '@/store/use-chat-store';
 import { NewConversationModal } from './new-conversation-modal';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { SearchInput } from '@/components/search-input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { useSocket } from '@/components/socket-provider';
@@ -21,9 +21,9 @@ export function ChatSidebar() {
     setActiveConversationId,
     fetchConversations,
     loadingConversations,
+    searchQuery,
+    setSearchQuery,
   } = useChatStore();
-
-  const [searchQuery, setSearchQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
 
   const { onlineUsers } = useSocket();
@@ -111,13 +111,11 @@ export function ChatSidebar() {
       </div>
 
       {/* Search */}
-      <div className="px-4 pb-3 relative">
-        <Search className="absolute left-7 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
+      <div className="px-4 pb-3">
+        <SearchInput
           placeholder="Search chats..."
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9 h-9 bg-background/50 border-border"
+          onSearch={setSearchQuery}
         />
       </div>
 

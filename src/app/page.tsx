@@ -45,13 +45,13 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
-              onClick={() => signIn('google')}
+              onClick={() => router.push('/auth/signin')}
               className="text-sm font-medium"
             >
               Sign In
             </Button>
             <Button
-              onClick={() => signIn('google')}
+              onClick={() => router.push('/auth/signin')}
               className="shadow-md shadow-primary/25"
             >
               Get Started
@@ -81,7 +81,7 @@ export default function LandingPage() {
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button
             size="lg"
-            onClick={() => signIn('google')}
+            onClick={() => router.push('/auth/signin')}
             className="group px-8 py-6 text-base shadow-lg shadow-primary/25"
           >
             Get Started Free

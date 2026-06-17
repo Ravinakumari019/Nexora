@@ -1,12 +1,14 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Bell, Menu } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 import { SearchInput } from '@/components/search-input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useChatStore } from '@/store/use-chat-store';
 
 interface NavbarProps {
   /** Title displayed in the navbar */
@@ -29,8 +31,19 @@ interface NavbarProps {
  */
 export function Navbar({ title, onMenuClick, className }: NavbarProps) {
   const { data: session } = useSession();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { searchQuery, setSearchQuery } = useChatStore();
+  
   const user = session?.user;
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    if (value.trim() !== '' && pathname !== '/chat') {
+      router.push('/chat');
+    }
+  };
 
   return (
     <header
@@ -62,7 +75,11 @@ export function Navbar({ title, onMenuClick, className }: NavbarProps) {
 
       {/* Search */}
       <div className="hidden w-full max-w-xs md:block">
-        <SearchInput placeholder="Search conversations..." />
+        <SearchInput
+          placeholder="Search conversations..."
+          value={searchQuery}
+          onSearch={handleSearch}
+        />
       </div>
 
       {/* Actions */}
