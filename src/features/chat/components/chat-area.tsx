@@ -23,6 +23,8 @@ export function ChatArea() {
     sendMessage,
     loadingMessages,
     setActiveConversationId,
+    messageSearchQuery,
+    setMessageSearchQuery,
   } = useChatStore();
 
   const { joinRoom, leaveRoom, emitTyping, typingUsers, onlineUsers } = useSocket();
@@ -36,6 +38,9 @@ export function ChatArea() {
   // Resolve current active conversation data
   const activeConversation = conversations.find((c) => c.id === activeConversationId);
   const activeMessages = activeConversationId ? messages[activeConversationId] || [] : [];
+  const filteredMessages = activeMessages.filter((msg) =>
+    msg.content.toLowerCase().includes(messageSearchQuery.toLowerCase())
+  );
 
   // Fetch initial messages and manage room join/leave
   useEffect(() => {
@@ -239,6 +244,21 @@ export function ChatArea() {
 
       {/* Message Area */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        {/* Search Query Filter Badge Indicator */}
+        {messageSearchQuery.trim() !== '' && (
+          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-3 flex items-center justify-between text-xs animate-fadeIn select-none mb-2">
+            <div className="text-muted-foreground">
+              Showing <span className="font-semibold text-foreground">{filteredMessages.length}</span> matching messages for "<span className="font-semibold text-primary">{messageSearchQuery}</span>"
+            </div>
+            <button
+              onClick={() => setMessageSearchQuery('')}
+              className="text-xs font-semibold text-primary hover:underline focus:outline-none"
+            >
+              Clear Search
+            </button>
+          </div>
+        )}
+
         {loadingMessages && activeMessages.length === 0 ? (
           <div className="flex h-full items-center justify-center text-muted-foreground gap-2">
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
@@ -252,8 +272,16 @@ export function ChatArea() {
               Type a message below to start the conversation!
             </p>
           </div>
+        ) : filteredMessages.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground px-4 animate-fadeIn">
+            <MessageSquare size={32} className="opacity-30 mb-2" />
+            <p className="text-sm font-medium">No matches found</p>
+            <p className="text-xs text-muted-foreground/80 mt-1 max-w-[220px]">
+              No messages inside this chat matched your search query "{messageSearchQuery}".
+            </p>
+          </div>
         ) : (
-          activeMessages.map((msg: ChatMessage) => {
+          filteredMessages.map((msg: ChatMessage) => {
             const isSelf = msg.authorId === currentUserId;
             const authorInitial = msg.author.name ? msg.author.name.charAt(0).toUpperCase() : 'U';
 

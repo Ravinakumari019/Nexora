@@ -31,19 +31,11 @@ interface NavbarProps {
  */
 export function Navbar({ title, onMenuClick, className }: NavbarProps) {
   const { data: session } = useSession();
-  const router = useRouter();
   const pathname = usePathname();
-  const { searchQuery, setSearchQuery } = useChatStore();
+  const { activeConversationId, messageSearchQuery, setMessageSearchQuery } = useChatStore();
   
   const user = session?.user;
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
-
-  const handleSearch = (value: string) => {
-    setSearchQuery(value);
-    if (value.trim() !== '' && pathname !== '/chat') {
-      router.push('/chat');
-    }
-  };
 
   return (
     <header
@@ -73,14 +65,16 @@ export function Navbar({ title, onMenuClick, className }: NavbarProps) {
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Search */}
-      <div className="hidden w-full max-w-xs md:block">
-        <SearchInput
-          placeholder="Search conversations..."
-          value={searchQuery}
-          onSearch={handleSearch}
-        />
-      </div>
+      {/* Search Messages inside active conversation */}
+      {pathname === '/chat' && activeConversationId && (
+        <div className="hidden w-full max-w-xs md:block">
+          <SearchInput
+            placeholder="Search messages..."
+            value={messageSearchQuery}
+            onSearch={setMessageSearchQuery}
+          />
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex items-center gap-2">

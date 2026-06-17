@@ -36,6 +36,8 @@ interface ChatStore {
   loadingMessages: boolean;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  messageSearchQuery: string;
+  setMessageSearchQuery: (query: string) => void;
 
   setConversations: (conversations: ChatConversation[]) => void;
   setActiveConversationId: (id: string | null) => void;
@@ -55,13 +57,15 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   loadingConversations: false,
   loadingMessages: false,
   searchQuery: '',
+  messageSearchQuery: '',
 
   setSearchQuery: (query) => set({ searchQuery: query }),
+  setMessageSearchQuery: (query) => set({ messageSearchQuery: query }),
 
   setConversations: (conversations) => set({ conversations }),
 
   setActiveConversationId: (id) => {
-    set({ activeConversationId: id });
+    set({ activeConversationId: id, messageSearchQuery: '' });
     if (id && !get().messages[id]) {
       get().fetchMessages(id);
     }
