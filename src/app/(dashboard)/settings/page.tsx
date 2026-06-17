@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 type SettingsTab = 'Profile' | 'Notifications' | 'Appearance' | 'Privacy & Security';
 
@@ -20,6 +21,19 @@ export default function SettingsPage() {
   const [name, setName] = useState('');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
+  const [accent, setAccent] = useState('coral');
+
+  useEffect(() => {
+    const savedAccent = localStorage.getItem('nexora-accent') || 'coral';
+    setAccent(savedAccent);
+  }, []);
+
+  const handleAccentChange = (newAccent: string) => {
+    setAccent(newAccent);
+    document.documentElement.setAttribute('data-accent', newAccent);
+    localStorage.setItem('nexora-accent', newAccent);
+    toast.success(`Workspace accent updated to ${newAccent}!`);
+  };
 
   // Initialize fields once session loads
   useEffect(() => {
@@ -229,13 +243,27 @@ export default function SettingsPage() {
                   <div className="border-t border-border/50 pt-4 flex flex-col gap-2">
                     <p className="text-sm font-semibold text-foreground">Accent Color</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Nexora uses the custom warm color palette (amber/primary highlights) for a modern, glassmorphic layout.
+                      Customize the highlight and accent color scheme for your Nexora workspace.
                     </p>
-                    <div className="flex gap-2 pt-2">
-                      <span className="h-6 w-6 rounded-full bg-primary ring-2 ring-primary/20 cursor-pointer" />
-                      <span className="h-6 w-6 rounded-full bg-blue-500 opacity-40 cursor-not-allowed" />
-                      <span className="h-6 w-6 rounded-full bg-emerald-500 opacity-40 cursor-not-allowed" />
-                      <span className="h-6 w-6 rounded-full bg-rose-500 opacity-40 cursor-not-allowed" />
+                    <div className="flex gap-3 pt-2">
+                      {[
+                        { name: 'coral', color: 'bg-primary' },
+                        { name: 'blue', color: 'bg-blue-500' },
+                        { name: 'emerald', color: 'bg-emerald-500' },
+                        { name: 'rose', color: 'bg-rose-500' },
+                      ].map((item) => (
+                        <button
+                          key={item.name}
+                          type="button"
+                          onClick={() => handleAccentChange(item.name)}
+                          className={cn(
+                            'h-7 w-7 rounded-full cursor-pointer transition-all duration-200 border border-border shadow-sm hover:scale-110 focus:outline-none',
+                            item.color,
+                            accent === item.name ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : 'opacity-80 hover:opacity-100'
+                          )}
+                          aria-label={`Accent ${item.name}`}
+                        />
+                      ))}
                     </div>
                   </div>
                 </CardContent>
